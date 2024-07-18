@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('purchaseorder', function (Blueprint $table) {
             $table->id();
             $table->string('no_po');
-            $table->foreignId('bahanbaku_id')->constrained();
-            $table->foreignId('pembelian_id')->constrained();
             $table->timestamps();
         });
     }
