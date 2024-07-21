@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title') | {{ env('APP_NAME') }}</title>
+    <title>@yield('title') | PT. Indoneptune Net</title>
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" href="{{ URL::asset('build/images/logo-indoneptune.png') }}" type="image/png">
@@ -30,6 +30,7 @@
     <!--end overlay-->
 
     @include('layouts.common-scripts')
+    
 </body>
 
 </html>

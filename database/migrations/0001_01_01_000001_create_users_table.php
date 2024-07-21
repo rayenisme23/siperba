@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password', 100)->default(Hash::make('user#123'));
             $table->string('no_hp', 20)->nullable();
             $table->string('alamat', 150)->nullable();
-            $table->integer('departemen_id')->default('2');
+            $table->integer('departemen_id')->default('4');
             $table->string('foto', 100)->default('default.jpg');
             $table->rememberToken();
             $table->timestamps();

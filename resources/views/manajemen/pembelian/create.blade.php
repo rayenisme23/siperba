@@ -92,7 +92,7 @@
                                 <span class="input-group-text" id="basic-addon1">
                                     <span class="material-icons-outlined">inventory_2</span>
                                 </span>
-                                <input type="text" class="form-control" id="qty" name="qty"
+                                <input type="number" class="form-control" id="qty" name="qty"
                                     placeholder="Masukkan jumlah" aria-label="Username" aria-describedby="basic-addon1">
                             </div>
                         </div>
@@ -170,6 +170,43 @@
 
             let baris = 0;
 
+            // $(document).on('click', '#tambah', function() {
+            //     baris = baris + 1;
+            //     let bahanbaku_id = $('#bahanbaku_id').val();
+            //     let nama_bahanbaku = $('#nama_bahanbaku').val();
+            //     let supplier_id = $('#supplier_id').val();
+            //     let nama_supplier = $('#nama_supplier').val();
+            //     let qty = $('#qty').val();
+            //     let harga = $('#harga').val();
+            //     let subtotal = qty * harga;
+
+            //     var html = "<tbody>"
+            //     html += "<tr id= 'baris'" + baris + ">"
+            //     html += "<td contenteditable='true' class='bahanbaku_id d-none' id='bahanbaku_id'" + baris +
+            //         ">" +
+            //         bahanbaku_id + "</td>"
+            //     html += "<td contenteditable='true' class='nama_bahanbaku' id='nama_bahanbaku'" + baris +
+            //         ">" +
+            //         nama_bahanbaku + "</td>"
+            //     html += "<td contenteditable='true' class='supplier_id invisible' id='supplier_id'" + baris +
+            //         ">" +
+            //         supplier_id + "</td>"
+            //     html += "<td contenteditable='true' class='nama_supplier invisible' id='nama_supplier'" + baris +
+            //         ">" +
+            //         nama_supplier + "</td>"
+            //     html += "<td contenteditable='true' class='qty' id='qty'" + baris + ">" + qty + "</td>"
+            //     html += "<td contenteditable='true' class='harga' id='harga'" + baris + ">" + harga +
+            //         "</td>"
+            //     html += "<td contenteditable='true' class='subtotal' id='subtotal'" + baris + ">" +
+            //         subtotal + "</td>"
+            //     html += "<td><button class='btn btn-sm btn-danger' id='hapus' data-row='baris'" + baris +
+            //         ">-</button></td>"
+            //     html += " </tr>"
+            //     html += " </tbody"
+            //     $('#pembelianTable').append(html)
+            //     $('#qty').val("");
+            // })
+
             $(document).on('click', '#tambah', function() {
                 baris = baris + 1;
                 let bahanbaku_id = $('#bahanbaku_id').val();
@@ -178,66 +215,113 @@
                 let nama_supplier = $('#nama_supplier').val();
                 let qty = $('#qty').val();
                 let harga = $('#harga').val();
-                let subtotal = qty * harga;
+                let total = qty * harga;
 
                 var html = "<tbody>"
-                html += "<tr id= 'baris'" + baris + ">"
-                html += "<td contenteditable='true' class='bahanbaku_id d-none' id='bahanbaku_id'" + baris +
-                    ">" +
-                    bahanbaku_id + "</td>"
-                html += "<td contenteditable='true' class='nama_bahanbaku' id='nama_bahanbaku'" + baris +
-                    ">" +
-                    nama_bahanbaku + "</td>"
-                html += "<td contenteditable='true' class='supplier_id invisible' id='supplier_id'" + baris +
-                    ">" +
-                    supplier_id + "</td>"
-                html += "<td contenteditable='true' class='nama_supplier invisible' id='nama_supplier'" + baris +
-                    ">" +
-                    nama_supplier + "</td>"
-                html += "<td contenteditable='true' class='qty' id='qty'" + baris + ">" + qty + "</td>"
-                html += "<td contenteditable='true' class='harga' id='harga'" + baris + ">" + harga +
+                html += "<tr id='baris" + baris + "'>"
+                html += "<td contenteditable='true' class='bahanbaku_id d-none' id='bahanbaku_id" + baris +
+                    "'>" + bahanbaku_id + "</td>"
+                html += "<td contenteditable='true' class='nama_bahanbaku' id='nama_bahanbaku" + baris +
+                    "'>" + nama_bahanbaku + "</td>"
+                html += "<td contenteditable='true' class='supplier_id d-none' id='supplier_id" + baris +
+                    "'>" + supplier_id + "</td>"
+                html += "<td contenteditable='true' class='nama_supplier' id='nama_supplier" +
+                    baris + "'>" + nama_supplier + "</td>"
+                html += "<td contenteditable='true' class='qty' id='qty" + baris + "'>" + qty + "</td>"
+                html += "<td contenteditable='true' class='harga' data-value='" + harga + "' id='harga" +
+                    baris + "'>" + formatRupiah(
+                        harga) +
                     "</td>"
-                html += "<td contenteditable='true' class='subtotal' id='subtotal'" + baris + ">" +
-                    subtotal + "</td>"
-                html += "<td><button class='btn btn-sm btn-danger' id='hapus' data-row='baris'" + baris +
-                    ">-</button></td>"
-                html += " </tr>"
-                html += " </tbody"
+                html += "<td contenteditable='true' class='total' data-value='" + total +
+                    "' id='total" + baris + "'>" +
+                    formatRupiah(total) + "</td>"
+                html += "<td><button class='btn btn-sm btn-danger' id='hapus' data-row='baris" + baris +
+                    "'>-</button></td>"
+                html += "</tr>"
+                html += "</tbody>"
 
                 $('#pembelianTable').append(html)
                 $('#qty').val("");
-            })
 
+                // Calculate total
+                calculateTotal();
+            });
+
+            function calculateTotal() {
+                let subtotal = 0;
+
+                $('.total').each(function() {
+                    subtotal += parseFloat($(this).data('value'));
+                });
+
+                // Remove the old total row if exists
+                $('#totalRow').remove();
+
+                // Append new total row
+                var totalHtml = "<tfoot id='totalRow'>"
+                totalHtml += "<tr>"
+                totalHtml += "<td colspan='4' class='text-right'>Subtotal:</td>"
+                totalHtml += "<td id='subtotal' data-value='" + subtotal + "' >" + formatRupiah(subtotal) + "</td>"
+                totalHtml += "<td></td>"
+                totalHtml += "</tr>"
+                totalHtml += "</tfoot>"
+
+                $('#pembelianTable').append(totalHtml);
+            }
+
+
+            function formatRupiah(angka) {
+                var number_string = angka.toString().replace(/[^,\d]/g, ''),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                return 'Rp ' + rupiah;
+            }
+
+
+
+            // $(document).on('click', '#hapus', function() {
+            //     let hapus = $(this).data('row')
+            //     $('#' + hapus).remove()
+            // })
             $(document).on('click', '#hapus', function() {
-                let hapus = $(this).data('row')
-                $('#' + hapus).remove()
+                let rowId = $(this).data('row');
+                $('#' + rowId).remove();
+                calculateTotal();
             })
 
             $(document).on('click', '#btn-simpan', function() {
                 let no_po = $('#no_po').val();
                 let users_id = $('#users_id').val();
+                let subtotal = $('#subtotal').data('value');
                 let bahanbaku_id = []
-                let supplier_id = []
+                let supplier_id = $('#supplier_id').val();
                 let qty = []
                 let harga = []
-                let subtotal = []
-
+                let total = []
+                // console.log(subtotal);
                 $('.bahanbaku_id').each(function() {
                     bahanbaku_id.push($(this).text())
                 })
-                $('.supplier_id').each(function() {
-                    supplier_id.push($(this).text())
-                })
+
                 $('.qty').each(function() {
                     qty.push($(this).text())
                 })
                 $('.harga').each(function() {
-                    harga.push($(this).text())
+                    harga.push($(this).data('value'))
                 })
-                $('.subtotal').each(function() {
-                    subtotal.push($(this).text())
+                console.log(harga);
+                $('.total').each(function() {
+                    total.push($(this).data('value'))
                 })
-                console.log(supplier_id);
                 $.ajax({
                     type: "POST",
                     url: "{{ url('pembelian-simpan') }}",
@@ -248,6 +332,7 @@
                         bahanbaku_id: bahanbaku_id,
                         qty: qty,
                         harga: harga,
+                        total: total,
                         subtotal: subtotal,
                     },
                     dataType: 'json',

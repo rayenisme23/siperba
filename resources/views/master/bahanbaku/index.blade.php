@@ -4,6 +4,7 @@
 @endsection
 @push('css')
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <link href="{{ URL::asset('build/plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet">
 @endpush
 @section('modal-button')
     <button type="button" class="d-flex justify-items-center btn btn-sm btn-primary px-4" onClick="add()"
@@ -29,45 +30,67 @@
                             name="bahanbakuForm" autocomplete="off" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="id" id="id">
+                            {{-- Foto --}}
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <input type="file" class="form-control" id="foto_bahanbaku" name="foto_bahanbaku">
+                                </div>
+                                <span class="error mt-1" id="error_foto_bahanbaku"></span>
+                            </div>
                             {{-- Nama Lengkap --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">view_in_ar</span>
-                                </span>
-                                <input type="text" class="form-control" id="nama_bahanbaku" name="nama_bahanbaku"
-                                    placeholder="Nama Bahan Baku" aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">view_in_ar</span>
+                                    </span>
+                                    <input type="text" class="form-control" id="nama_bahanbaku" name="nama_bahanbaku"
+                                        placeholder="Nama Bahan Baku" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_nama_bahanbaku"></div>
                             </div>
                             {{-- Harga --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">paid</span>
-                                </span>
-                                <input type="text" class="form-control" id="harga" name="harga"
-                                    placeholder="Rp. 0.000" aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">paid</span>
+                                    </span>
+                                    <input type="number" class="form-control" id="harga" name="harga"
+                                        placeholder="Rp. 0.000" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_harga"></div>
                             </div>
+
                             {{-- Satuan --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">scale</span>
-                                </span>
-                                <input type="text" class="form-control" id="satuan" name="satuan"
-                                    placeholder="Satuan" aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">scale</span>
+                                    </span>
+                                    <input type="text" class="form-control" id="satuan" name="satuan"
+                                        placeholder="Satuan" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_satuan"></div>
                             </div>
+
                             {{-- Stok --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">inventory_2</span>
-                                </span>
-                                <input type="text" class="form-control" id="stok" name="stok" placeholder="Stok"
-                                    aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">inventory_2</span>
+                                    </span>
+                                    <input type="number" class="form-control" id="stok" name="stok"
+                                        placeholder="Stok" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_stok"></div>
                             </div>
+
                             {{-- Tgl --}}
                             <div class="input-group mb-1">
                                 <span class="input-group-text" id="basic-addon1">
                                     <span class="material-icons-outlined">calendar_month</span>
                                 </span>
                                 <input type="text" class="form-control datepicker" id="tgl_exp" name="tgl_exp"
-                                    placeholder="Tanggal" aria-label="Username" aria-describedby="basic-addon1">
+                                    placeholder="Tanggal Expired" aria-label="Username" aria-describedby="basic-addon1">
                             </div>
                     </div>
                 </div>
@@ -89,7 +112,7 @@
     <link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
 @endpush
 @section('content')
-    <x-page-title title="Data User" />
+    <x-page-title title="Data Bahan Baku" />
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -120,6 +143,10 @@
     <script src="{{ URL::asset('build/plugins/simplebar/js/simplebar.min.js') }}"></script>
     <script src="{{ URL::asset('build/js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ URL::asset('build/plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+    <script src="{{ URL::asset('build/plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+    <script src="{{ URL::asset('build/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ URL::asset('build/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>
 
     <script type="text/javascript">
         $(".datepicker").flatpickr();
@@ -127,11 +154,13 @@
             $("#close").click(function() {
                 $(':input', '#bahanbaku-add').val("");
                 $('#bahanbakuModal').modal('hide');
+                $('.error').text('');
             });
 
             $("#cancel").click(function() {
                 $(':input', '#bahanbaku-add').val("");
                 $('#bahanbakuModal').modal('hide');
+                $('.error').text('');
             });
 
             $("#show_hide_password a").on('click', function(event) {
@@ -164,30 +193,48 @@
                     },
                     {
                         data: 'foto_bahanbaku',
-                        name: 'foto_bahanbaku'
+                        render: function(data, type, row, meta) {
+                            return "<img src='/build/images/bahanbaku/" + data +
+                                "'' height='70' width='70' class='text-center'>";
+                        }
                     },
                     {
                         data: 'nama_bahanbaku',
+                        className: 'align-middle',
                         name: 'nama_bahanbaku'
                     },
                     {
                         data: 'harga',
+                        className: 'align-middle',
                         name: 'harga'
                     },
                     {
                         data: 'satuan',
-                        name: 'satuan'
+                        name: 'satuan',
+                        className: 'text-center align-middle',
                     },
                     {
                         data: 'stok',
-                        name: 'stok'
+                        className: 'align-middle',
+                        name: 'stok',
+                        render: function(data, type, row) {
+                            if (data < 100) {
+                                return `<span class="d-block bg-danger rounded me-3 py-1 fw-bold text-white text-center">${data}</span>`;
+                            } else {
+                                return `<span class="d-block bg-success rounded me-3 py-1 fw-bold text-white text-center">${data}</span>`;
+                            }
+                        }
                     },
                     {
                         data: 'tgl_exp',
-                        name: 'tgl_exp'
+                        className: 'text-center align-middle',
+                        render: function(data, type, row, meta) {
+                            return data == null ? '-' : data;
+                        }
                     },
                     {
                         data: 'action',
+                        className: 'align-middle',
                         name: 'action',
                         width: '8%',
                         orderable: false
@@ -209,23 +256,38 @@
         }
 
         function editFunc(id) {
-
             $.ajax({
                 type: "POST",
-                url: "{{ url('bahanbaku-edit') }}",
+                url: "{{ url('bahanbaku-edit') }}", // Pastikan URL ini sesuai dengan rute di Laravel
                 data: {
                     id: id
                 },
                 dataType: 'json',
                 success: function(res) {
                     $('#bahanbakuModal').modal('show');
-                    $('#modal-Title').html("Form Edit User");
+                    $('#modal-Title').html("Form Edit Bahan Baku");
                     $('#id').val(res.id);
                     $('#nama_bahanbaku').val(res.nama_bahanbaku);
                     $('#harga').val(res.harga);
                     $('#satuan').val(res.satuan);
                     $('#stok').val(res.stok);
                     $('#tgl_exp').val(res.tgl_exp);
+
+                    // Menampilkan gambar aktif jika ada
+                    if (res.foto_bahanbaku) {
+                        $('#current_image').attr('src', "{{ url('build/images/bahanbaku/') }}/" + res
+                            .foto_bahanbaku);
+                        $('#current_image').show(); // Pastikan gambar terlihat
+                    } else {
+                        $('#current_image').hide(); // Sembunyikan gambar jika tidak ada
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: xhr.responseJSON.error || "Terjadi kesalahan. Silakan coba lagi.",
+                        icon: "error"
+                    });
                 }
             });
         }
@@ -251,6 +313,9 @@
                         swal.fire("Berhasil!", res.message, "success");
                         var oTable = $('#example2').dataTable();
                         oTable.fnDraw(false);
+                    },
+                    error: function(res) {
+                        console.log(res);
                     }
                 });
             })
@@ -280,9 +345,16 @@
                     oTable.fnDraw(false);
                     $("#btn-save").html('Submit');
                     $("#btn-save").attr("disabled", false);
+                    $('.error').text('');
                 },
                 error: function(data) {
-                    console.log(data);
+                    var errors = data.responseJSON.errors;
+                    $('.error').text('');
+
+                    $.each(errors, function(key, value) {
+                        $('#error_' + key).text(value[
+                            0]);
+                    });
                 }
             });
         });

@@ -3,270 +3,153 @@
     User Profile
 @endsection
 @section('content')
-
-    <x-page-title title="Components" subtitle="User Profile" />
+    <x-page-title title="Profil User" />
 
     <div class="card rounded-4">
         <div class="card-body p-4">
             <div class="position-relative mb-5">
-                <img src="https://placehold.co/1920x500/png" class="img-fluid rounded-4 shadow" alt="">
+                <img src="{{ URL::asset('build/images/bg-profile.png') }}" class="img-fluid rounded-4 shadow" alt="">
                 <div class="profile-avatar position-absolute top-100 start-50 translate-middle">
-                    <img src="https://placehold.co/110x110/png" class="img-fluid rounded-circle p-1 bg-grd-danger shadow"
-                        width="170" height="170" alt="">
+                    <img src="{{ URL::asset('build/images/users/' . $users->foto) }}"
+                        class="img-fluid rounded-circle p-1 bg-grd-danger shadow" width="170" height="170"
+                        alt="">
                 </div>
             </div>
             <div class="profile-info pt-5 d-flex align-items-center justify-content-between">
                 <div class="">
-                    <h3>Jhon Deo</h3>
-                    <p class="mb-0">Engineer at BB Agency Industry<br>
-                        New York, United States</p>
+                    <h3>{{ $users->nama_user }}</h3>
+                    <p>Departemen {{ $users->nama_departemen }}</p>
+                    <div class="d-flex">
+                        <p class="mb-0 d-flex align-items-center">
+                            <small class="material-icons-outlined me-1">
+                                email
+                            </small>
+                            {{ $users->email }}
+                        </p>
+                        <span class="mx-2">|</span>
+                        <p class="mb-0 d-flex align-items-center">
+                            <small class="material-icons-outlined me-1">
+                                call
+                            </small>
+                            {{ $users->no_hp }}
+                        </p>
+                    </div>
                 </div>
                 <div class="">
-                    <a href="javascript:;" class="btn btn-grd-primary rounded-5 px-4"><i class="bi bi-chat me-2"></i>Send
-                        Message</a>
+                    <div class="dropdown">
+                        <button class="d-flex align-items-center btn btn-sm btn-primary dropdown-toggle" type="button"
+                            id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <small class="material-icons-outlined me-1">
+                                settings
+                            </small>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><button type="button" onClick="edit()" class="dropdown-item" href="javascript:void(0)">Edit
+                                    Profil</button></li>
+                            <hr class="my-0">
+                            <li><button type="button" class="dropdown-item">Ubah Password</button></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="kewords d-flex align-items-center gap-3 mt-4 overflow-x-auto">
-                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">UX Research</button>
-                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">CX Strategy</button>
-                <button type="button" class="btn btn-sm btn-light rounded-5 px-4">Management</button>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-xl-8">
-            <div class="card rounded-4 border-top border-4 border-primary border-gradient-1">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="">
-                            <h5 class="mb-0 fw-bold">Edit Profile</h5>
-                        </div>
-                        <div class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle"
-                                data-bs-toggle="dropdown">
-                                <span class="material-icons-outlined fs-5">more_vert</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:;">Action</a></li>
-                                <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
-                                <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
-                            </ul>
+    <!-- Modal Edit Profil -->
+    <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header border-bottom-2 py-2">
+                    <h5 class="modal-title" id="modal-Title"></h5>
+                    <a href="javascript:;" id="close" class="primaery-menu-close">
+                        <i class="material-icons-outlined">close</i>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="form-body">
+                        <form class="row g-3" action="javascript:void(0)" method="POST" id="editForm" name="userForm"
+                            autocomplete="off" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="id" id="id">
+                            {{-- Nama Lengkap --}}
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <span class="material-icons-outlined">person</span>
+                                </span>
+                                <input type="text" class="form-control" id="nama_user" name="nama_user"
+                                    placeholder="Nama Lengkap" aria-label="Username" aria-describedby="basic-addon1">
+                            </div>
+                            {{-- Email --}}
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <span class="material-icons-outlined">email</span>
+                                </span>
+                                <input type="text" class="form-control" id="email" name="email"
+                                    placeholder="example@gmail.com" aria-label="Username" aria-describedby="basic-addon1">
+                            </div>
+                            {{-- Ponsel --}}
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <span class="material-icons-outlined">call</span>
+                                </span>
+                                <input type="text" class="form-control" id="no_hp" name="no_hp"
+                                    placeholder="Ponsel" aria-label="Username" aria-describedby="basic-addon1">
+                            </div>
+                            {{-- Alamat --}}
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <span class="material-icons-outlined">location_on</span>
+                                </span>
+                                <input type="text" class="form-control" id="alamat" name="alamat"
+                                    placeholder="Alamat" aria-label="Username" aria-describedby="basic-addon1">
+                            </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {{-- Button --}}
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            <button type="button" id="cancel" class="btn btn-sm btn-secondary px-4">Batal</button>
+                            <button type="submit" class="btn btn-sm btn-primary px-4" id="btn-save">Simpan</button>
                         </div>
                     </div>
-                    <form class="row g-4">
-                        <div class="col-md-6">
-                            <label for="input1" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="input1" placeholder="First Name">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="input2" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="input2" placeholder="Last Name">
-                        </div>
-                        <div class="col-md-12">
-                            <label for="input3" class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="input3" placeholder="Phone">
-                        </div>
-                        <div class="col-md-12">
-                            <label for="input4" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="input4">
-                        </div>
-                        <div class="col-md-12">
-                            <label for="input5" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="input5">
-                        </div>
-                        <div class="col-md-12">
-                            <label for="input6" class="form-label">DOB</label>
-                            <input type="date" class="form-control" id="input6">
-                        </div>
-                        <div class="col-md-12">
-                            <label for="input7" class="form-label">Country</label>
-                            <select id="input7" class="form-select">
-                                <option selected="">Choose...</option>
-                                <option>One</option>
-                                <option>Two</option>
-                                <option>Three</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="input8" class="form-label">City</label>
-                            <input type="text" class="form-control" id="input8" placeholder="City">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="input9" class="form-label">State</label>
-                            <select id="input9" class="form-select">
-                                <option selected="">Choose...</option>
-                                <option>One</option>
-                                <option>Two</option>
-                                <option>Three</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="input10" class="form-label">Zip</label>
-                            <input type="text" class="form-control" id="input10" placeholder="Zip">
-                        </div>
-                        <div class="col-md-12">
-                            <label for="input11" class="form-label">Address</label>
-                            <textarea class="form-control" id="input11" placeholder="Address ..." rows="4" cols="4"></textarea>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="d-md-flex d-grid align-items-center gap-3">
-                                <button type="button" class="btn btn-grd-primary px-4">Update Profile</button>
-                                <button type="button" class="btn btn-light px-4">Reset</button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
+                </form>
             </div>
         </div>
-        <div class="col-12 col-xl-4">
-            <div class="card rounded-4">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="">
-                            <h5 class="mb-0 fw-bold">About</h5>
-                        </div>
-                        <div class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle"
-                                data-bs-toggle="dropdown">
-                                <span class="material-icons-outlined fs-5">more_vert</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:;">Action</a></li>
-                                <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
-                                <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="full-info">
-                        <div class="info-list d-flex flex-column gap-3">
-                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                    class="material-icons-outlined">account_circle</span>
-                                <p class="mb-0">Full Name: Jhon Deo</p>
-                            </div>
-                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                    class="material-icons-outlined">done</span>
-                                <p class="mb-0">Status: active</p>
-                            </div>
-                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                    class="material-icons-outlined">code</span>
-                                <p class="mb-0">Role: Developer</p>
-                            </div>
-                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                    class="material-icons-outlined">flag</span>
-                                <p class="mb-0">Country: USA</p>
-                            </div>
-                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                    class="material-icons-outlined">language</span>
-                                <p class="mb-0">Language: English</p>
-                            </div>
-                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                    class="material-icons-outlined">send</span>
-                                <p class="mb-0">Email: jhon.xyz</p>
-                            </div>
-                            <div class="info-list-item d-flex align-items-center gap-3"><span
-                                    class="material-icons-outlined">call</span>
-                                <p class="mb-0">Phone: (124) 895-6724</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card rounded-4">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="">
-                            <h5 class="mb-0 fw-bold">Accounts</h5>
-                        </div>
-                        <div class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle"
-                                data-bs-toggle="dropdown">
-                                <span class="material-icons-outlined fs-5">more_vert</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:;">Action</a></li>
-                                <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
-                                <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="account-list d-flex flex-column gap-4">
-                        <div class="account-list-item d-flex align-items-center gap-3">
-                            <img src="{{ URL::asset('build/images/apps/05.png') }}" width="35" alt="">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">Google</h6>
-                                <p class="mb-0">Events and Reserch</p>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" checked>
-                            </div>
-                        </div>
-                        <div class="account-list-item d-flex align-items-center gap-3">
-                            <img src="{{ URL::asset('build/images/apps/02.png') }}" width="35" alt="">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">Skype</h6>
-                                <p class="mb-0">Events and Reserch</p>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" checked>
-                            </div>
-                        </div>
-                        <div class="account-list-item d-flex align-items-center gap-3">
-                            <img src="{{ URL::asset('build/images/apps/03.png') }}" width="35" alt="">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">Slack</h6>
-                                <p class="mb-0">Communication</p>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" checked>
-                            </div>
-                        </div>
-                        <div class="account-list-item d-flex align-items-center gap-3">
-                            <img src="{{ URL::asset('build/images/apps/06.png') }}" width="35" alt="">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">Instagram</h6>
-                                <p class="mb-0">Social Network</p>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" checked>
-                            </div>
-                        </div>
-                        <div class="account-list-item d-flex align-items-center gap-3">
-                            <img src="{{ URL::asset('build/images/apps/17.png') }}" width="35" alt="">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">Facebook</h6>
-                                <p class="mb-0">Social Network</p>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" checked>
-                            </div>
-                        </div>
-                        <div class="account-list-item d-flex align-items-center gap-3">
-                            <img src="{{ URL::asset('build/images/apps/11.png') }}" width="35" alt="">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">Paypal</h6>
-                                <p class="mb-0">Social Network</p>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" checked>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                </div>
-            </div>
-
-        </div>
-    </div><!--end row-->
-
+    </div>
 @endsection
 @push('script')
     <!--plugins-->
     <script src="{{ URL::asset('build/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
     <script src="{{ URL::asset('build/plugins/metismenu/metisMenu.min.js') }}"></script>
     <script src="{{ URL::asset('build/plugins/simplebar/js/simplebar.min.js') }}"></script>
+
+    <script>
+        function edit(id) {
+            $.ajax({
+                type: "POST",
+                url: "{{ url('profile-edit') }}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(res) {
+                    $('#userModal').modal('show');
+                    $('#modal-Title').html("Form Edit User");
+                    $('#id').val(res.id);
+                    $('#nama_user').val(res.nama_user);
+                    $('#no_hp').val(res.no_hp);
+                    $('#email').val(res.email);
+                    $('#alamat').val(res.alamat);
+                    $('#departemen_id').val(res.departemen_id);
+                }
+            });
+        }
+        $(document).ready(function() {
+
+        });
+    </script>
 @endpush

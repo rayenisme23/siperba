@@ -11,5 +11,5 @@ class Supplier extends Model
 
     protected $table = 'supplier';
 
-    protected $fillable = ['nama_supplier', 'email', 'no_hp', 'alamat'];
+    protected $guarded = [];
 }

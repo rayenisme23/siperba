@@ -26,49 +26,75 @@
                             autocomplete="off" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="id" id="id">
+                            {{-- Foto --}}
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <input type="file" class="form-control" id="foto" name="foto">
+                                </div>
+                                <div class="error mt-1" id="error_foto"></div>
+                            </div>
                             {{-- Nama Lengkap --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">person</span>
-                                </span>
-                                <input type="text" class="form-control" id="nama_user" name="nama_user"
-                                    placeholder="Nama Lengkap" aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">person</span>
+                                    </span>
+                                    <input type="text" class="form-control" id="nama_user" name="nama_user"
+                                        placeholder="Nama Lengkap" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_nama_user"></div>
                             </div>
+                            
                             {{-- Departemen --}}
-                            <div class="input-group mb-1">
-                                <label class="input-group-text" for="departemen_id">
-                                    <span class="material-icons-outlined">maps_home_work</span>
-                                </label>
-                                <select class="form-select" id="departemen_id" name="departemen_id">
-                                    <option selected disabled>Departemen</option>
-                                    @foreach ($departemen as $dep)
-                                        <option value="{{ $dep->id }}">{{ $dep->nama_departemen }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <label class="input-group-text" for="departemen_id">
+                                        <span class="material-icons-outlined">maps_home_work</span>
+                                    </label>
+                                    <select class="form-select" id="departemen_id" name="departemen_id">
+                                        <option selected disabled>Departemen</option>
+                                        @foreach ($departemen as $dep)
+                                            <option value="{{ $dep->id }}">{{ $dep->nama_departemen }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="error mt-1" id="error_departemen_id"></div>
+                            </div>            
+
                             {{-- Email --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">email</span>
-                                </span>
-                                <input type="text" class="form-control" id="email" name="email"
-                                    placeholder="example@gmail.com" aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">email</span>
+                                    </span>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        placeholder="example@gmail.com" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_email"></div>
                             </div>
+                            
                             {{-- Ponsel --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">call</span>
-                                </span>
-                                <input type="text" class="form-control" id="no_hp" name="no_hp"
-                                    placeholder="Ponsel" aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">call</span>
+                                    </span>
+                                    <input type="number" class="form-control" id="no_hp" name="no_hp"
+                                        placeholder="Ponsel" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_no_hp"></div>
                             </div>
+                            
                             {{-- Alamat --}}
-                            <div class="input-group mb-1">
-                                <span class="input-group-text" id="basic-addon1">
-                                    <span class="material-icons-outlined">location_on</span>
-                                </span>
-                                <input type="text" class="form-control" id="alamat" name="alamat"
-                                    placeholder="Alamat" aria-label="Username" aria-describedby="basic-addon1">
+                            <div class="form-group mb-1">
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <span class="material-icons-outlined">location_on</span>
+                                    </span>
+                                    <input type="text" class="form-control" id="alamat" name="alamat"
+                                        placeholder="Alamat" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="error mt-1" id="error_alamat"></div>
                             </div>
                     </div>
                 </div>
@@ -98,6 +124,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Foto</th>
                             <th>Nama</th>
                             <th>Departemen</th>
                             <th>Email</th>
@@ -131,11 +158,13 @@
             $("#close").click(function() {
                 $(':input', '#user-add').val("");
                 $('#userModal').modal('hide');
+                $('.error').text('');
             });
 
             $("#cancel").click(function() {
                 $(':input', '#user-add').val("");
                 $('#userModal').modal('hide');
+                $('.error').text('');
             });
 
             $("#show_hide_password a").on('click', function(event) {
@@ -167,27 +196,40 @@
                         }
                     },
                     {
+                        data: 'foto',
+                        render: function(data, type, row, meta) {
+                            return "<img src='/build/images/users/" + data +
+                                "'' height='55' width='55' class='text-center rounded-circle border shadow-sm p-1'>";
+                        }
+                    },
+                    {
                         data: 'nama_user',
+                        className: 'align-middle',
                         name: 'nama_user'
                     },
                     {
                         data: 'nama_departemen',
+                        className: 'align-middle',
                         name: 'departemen_id'
                     },
                     {
                         data: 'email',
+                        className: 'align-middle',
                         name: 'email'
                     },
                     {
                         data: 'no_hp',
+                        className: 'align-middle',
                         name: 'no_hp'
                     },
                     {
                         data: 'alamat',
+                        className: 'align-middle',
                         name: 'alamat'
                     },
                     {
                         data: 'action',
+                        className: 'align-middle',
                         name: 'action',
                         orderable: false
                     },
@@ -304,7 +346,13 @@
                     $("#btn-save").attr("disabled", false);
                 },
                 error: function(data) {
-                    console.log(data);
+                    var errors = data.responseJSON.errors;
+                    $('.error').text('');
+
+                    $.each(errors, function(key, value) {
+                        $('#error_' + key).text(value[
+                            0]);
+                    });
                 }
             });
         });

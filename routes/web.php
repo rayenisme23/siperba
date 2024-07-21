@@ -6,8 +6,10 @@ use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PermintaanController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Models\Permintaan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,67 +25,68 @@ Route::middleware('guest')->group(function () {
     // Route::view('/icons-boxicons', 'icons-boxicons');
     // Route::view('/user-profile', 'user-profile');
 
-    Route::view('/', ('auth.login'));
+    Route::view('/', 'auth.login');
 
     // Register
     Route::get('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/register', [AuthController::class, 'registerPost']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth',)->group(function () {
     // Dahsboard
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
+    // Profile
+    Route::get('/user/profile', [HomeController::class, 'profile']);
+    Route::post('/profile-edit', [ProfileController::class, 'edit']);
+
     // User
-    Route::get('/master/user', [UserController::class, 'index']);
-    Route::post('/user-add', [UserController::class, 'store']);
-    Route::post('/user-edit', [UserController::class, 'edit']);
-    Route::post('/user-destroy', [UserController::class, 'destroy']);
+    Route::get('/master/user', [UserController::class, 'index'])->middleware('role:Administrator');
+    Route::post('/user-add', [UserController::class, 'store'])->middleware('role:Administrator');
+    Route::post('/user-edit', [UserController::class, 'edit'])->middleware('role:Administrator');
+    Route::post('/user-destroy', [UserController::class, 'destroy'])->middleware('role:Administrator');
 
     // Bahanbaku
-    Route::get('/master/bahanbaku', [BahanbakuController::class, 'index']);
-    Route::post('/bahanbaku-add', [BahanbakuController::class, 'store']);
-    Route::post('/bahanbaku-edit', [BahanbakuController::class, 'edit']);
-    Route::post('/bahanbaku-destroy', [BahanbakuController::class, 'destroy']);
+    Route::get('/master/bahanbaku', [BahanbakuController::class, 'index'])->middleware('role:Administrator|Pembelian|Gudang');
+    Route::post('/bahanbaku-add', [BahanbakuController::class, 'store'])->middleware('role:Administrator|Pembelian|Gudang');
+    Route::post('/bahanbaku-edit', [BahanbakuController::class, 'edit'])->middleware('role:Administrator|Pembelian|Gudang');
+    Route::post('/bahanbaku-destroy', [BahanbakuController::class, 'destroy'])->middleware('role:Administrator|Pembelian|Gudang');
 
     // Departemen
-    Route::get('/master/departemen', [DepartemenController::class, 'index']);
-    Route::post('/departemen-store', [DepartemenController::class, 'store']);
-    Route::post('/departemen-edit', [DepartemenController::class, 'edit']);
-    Route::post('/departemen-destroy', [DepartemenController::class, 'destroy']);
+    Route::get('/master/departemen', [DepartemenController::class, 'index'])->middleware('role:Administrator');
+    Route::post('/departemen-store', [DepartemenController::class, 'store'])->middleware('role:Administrator');
+    Route::post('/departemen-edit', [DepartemenController::class, 'edit'])->middleware('role:Administrator');
+    Route::post('/departemen-destroy', [DepartemenController::class, 'destroy'])->middleware('role:Administrator');
 
     // Supplier
-    Route::get('/master/supplier', [SupplierController::class, 'index']);
-    Route::post('/supplier-store', [SupplierController::class, 'store']);
-    Route::post('/supplier-edit', [SupplierController::class, 'edit']);
-    Route::post('/supplier-destroy', [SupplierController::class, 'destroy']);
+    Route::get('/master/supplier', [SupplierController::class, 'index'])->middleware('role:Administrator|Pembelian');
+    Route::post('/supplier-store', [SupplierController::class, 'store'])->middleware('role:Administrator|Pembelian');
+    Route::post('/supplier-edit', [SupplierController::class, 'edit'])->middleware('role:Administrator|Pembelian');
+    Route::post('/supplier-destroy', [SupplierController::class, 'destroy'])->middleware('role:Administrator|Pembelian');
 
     // Permintaan
-    Route::get('/manajemen/permintaan', [PermintaanController::class, 'index']);
-    Route::post('/permintaan-store', [PermintaanController::class, 'store']);
-    Route::post('/permintaan-edit', [PermintaanController::class, 'edit']);
-    Route::post('/permintaan-destroy', [PermintaanController::class, 'destroy']);
-
-
-    // // Pembelian
-    // Route::get('/manajemen/pembelian', [PembelianController::class, 'index']);
-    // Route::post('/pembelian-store', [PembelianController::class, 'store']);
-    // Route::post('/pembelian-edit', [PembelianController::class, 'edit']);
-    // Route::post('/pembelian-detail', [PembelianController::class, 'detail']);
-    // Route::post('/pembelian-destroy', [PembelianController::class, 'destroy']);
-    // Route::get('/pembelian-bb/{id}', [PembelianController::class, 'getBahanbaku']);
+    Route::get('/manajemen/permintaan', [PermintaanController::class, 'index'])->middleware('role:Produksi|Gudang');
+    Route::post('/permintaan-store', [PermintaanController::class, 'store'])->middleware('role:Produksi');
+    Route::post('/permintaan-edit', [PermintaanController::class, 'edit'])->middleware('role:Produksi|Gudang');
+    Route::post('/permintaan-destroy', [PermintaanController::class, 'destroy'])->middleware('role:Produksi');
+    Route::get('/user-get/{id}', [PermintaanController::class, 'user'])->middleware('role:Gudang');
+    Route::get('/bahanbaku-get/{id}', [PermintaanController::class, 'bahanbaku'])->middleware('role:Gudang');
+    Route::get('/departemen-get/{id}', [PermintaanController::class, 'departemen'])->middleware('role:Gudang');
+    // Permintaan-detail
+    Route::get('/permintaan-detail', [PermintaanController::class, 'detail'])->middleware('role:Gudang');
+    Route::post('/permintaan-terima', [PermintaanController::class, 'terimastatus'])->middleware('role:Gudang');
+    Route::post('/permintaan-tolak', [PermintaanController::class, 'tolakstatus'])->middleware('role:Gudang');
 
     // Pembelian
-    Route::get('/pembelian/create', [PembelianController::class, 'create']);
-    Route::get('/manajemen/pembelian', [PembelianController::class, 'index']);
-    Route::post('/pembelian-store', [PembelianController::class, 'store']);
-    Route::post('/pembelian-edit', [PembelianController::class, 'edit']);
-    Route::get('/pembelian-bb/{id}', [PembelianController::class, 'bahanBaku']);
-    Route::get('/pembelian-supp/{id}', [PembelianController::class, 'supplier']);
-    Route::post('/pembelian-destroy', [PembelianController::class, 'destroy']);
-    Route::post('/pembelian-simpan', [PembelianController::class, 'simpan']);
-    Route::post('/pembelian-detail', [PembelianController::class, 'detail']);
-
-    // Detail
-    Route::get('/detail', [PembelianController::class, 'detail']);
+    Route::get('/manajemen/pembelian', [PembelianController::class, 'index'])->middleware('role:Pembelian|Gudang');
+    Route::post('/pembelian-store', [PembelianController::class, 'store'])->middleware('role:Pembelian');
+    Route::post('/pembelian-edit', [PembelianController::class, 'edit'])->middleware('role:Pembelian');
+    Route::get('/pembelian-bb/{id}', [PembelianController::class, 'bahanBaku'])->middleware('role:Pembelian|Gudang');
+    Route::get('/pembelian-supp/{id}', [PembelianController::class, 'supplier'])->middleware('role:Pembelian|Gudang');
+    Route::post('/pembelian-destroy', [PembelianController::class, 'destroy'])->middleware('role:Pembelian');
+    Route::post('/pembelian-simpan', [PembelianController::class, 'simpan'])->middleware('role:Pembelian|Gudang');
+    Route::post('/pembelian-detail', [PembelianController::class, 'detail'])->middleware('role:Pembelian|Gudang');
+    // Permintaan-detail
+    Route::get('/permintaan-detail', [PermintaanController::class, 'detail'])->middleware('role:Gudang');
+    Route::post('/permintaan-terima', [PermintaanController::class, 'terimastatus'])->middleware('role:Gudang');
 });

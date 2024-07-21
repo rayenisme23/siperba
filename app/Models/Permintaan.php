@@ -11,5 +11,15 @@ class Permintaan extends Model
 
     protected $table = 'permintaan';
 
-    protected $fillable = ['bahanbaku_id', 'users_id', 'qty', 'status'];
+    protected $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id');
+    }
+
+    public function bahanbaku()
+    {
+        return $this->belongsTo(Bahanbaku::class, 'bahanbaku_id');
+    }
 }

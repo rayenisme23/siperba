@@ -11,5 +11,5 @@ class Departemen extends Model
 
     protected $table = 'departemen';
 
-    protected $fillable = ['nama_departemen'];
+    protected $guarded = [];
 }

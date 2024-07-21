@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('purchaseorder', function (Blueprint $table) {
+        Schema::create('relation_pembelian', function (Blueprint $table) {
             $table->id();
-            $table->string('no_po');
+            $table->integer('qty');
+            $table->integer('harga');
+            $table->integer('total');
+            $table->foreignId('pembelian_id')->references('id')->on('pembelian');
+            $table->foreignId('bahanbaku_id')->references('id')->on('bahanbaku');
             $table->timestamps();
         });
     }

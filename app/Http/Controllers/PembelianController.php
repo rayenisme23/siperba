@@ -4,19 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Bahanbaku;
 use App\Models\Pembelian;
-use App\Models\PurchaseOrder;
+use App\Models\Relation_pembelian;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
 class PembelianController extends Controller
 {
     public function index()
     {
-        $tanggal = $purchase = Pembelian::latest()->first();
+        $purchase = Pembelian::latest()->first();
         $first = 'PO';
         $tahun = date('mY');
         if ($purchase == null) {
@@ -28,9 +26,9 @@ class PembelianController extends Controller
         $no_po = $first . $tahun . $nomor;
         $bahanbaku = Bahanbaku::all();
         $supplier = Supplier::all();
-        $users = Auth::user()->id;
+        $users = Auth::user();
 
-        $pembelian = DB::table('pembelian')->join('users', 'users.id', '=', 'pembelian.users_id')->join('bahanbaku', 'bahanbaku.id', 'pembelian.bahanbaku_id')->join('supplier', 'supplier.id', 'pembelian.supplier_id')->select('pembelian.*', 'users.nama_user', 'bahanbaku.nama_bahanbaku', 'bahanbaku.harga', 'supplier.nama_supplier')->get();
+        $pembelian = Pembelian::with('user', 'supplier');
 
         if (request()->ajax()) {
             return DataTables::of($pembelian)
@@ -41,6 +39,7 @@ class PembelianController extends Controller
                         Aksi
                     </button>
                     <ul class="dropdown-menu border">
+                        <li><a class="dropdown-item d-flex align-items-center text-sm" href="javascript:void(0);" onClick="detailFunc({{ $id }})">Detail</a></li>
                         <li><a class="dropdown-item d-flex align-items-center text-sm" href="javascript:void(0);" onClick="editFunc({{ $id }})">Edit</a></li>
                         <li><a class="dropdown-item d-flex align-items-center text-sm" href="javascript:void(0);" onClick="deleteFunc({{ $id }})">Delete</a>
                         </li>
@@ -55,42 +54,6 @@ class PembelianController extends Controller
 
         return view('manajemen.pembelian.index', compact('bahanbaku', 'pembelian', 'users', 'supplier', 'no_po'));
     }
-
-    public function store(Request $request)
-    {
-        $pembelian_id = $request->id;
-
-        $pembelian = Pembelian::updateOrCreate(
-            [
-                'id' => $pembelian_id,
-            ],
-            [
-                'no_po' => $request->no_po,
-                'bahanbaku_id' => $request->bahanbaku_id,
-                'supplier_id' => $request->supplier_id,
-                'users_id' => $request->users_id,
-                'qty' => $request->qty,
-                'subtotal' => $request->subtotal,
-            ],
-        );
-
-        return Response()->json($pembelian);
-    }
-
-    public function edit(Request $request)
-    {
-        $where = ['id' => $request->id];
-        $pembelian = Pembelian::where($where)->first();
-
-        return Response()->json($pembelian);
-    }
-
-    public function destroy(Request $request)
-    {
-        $pembelian = Pembelian::where('id', $request->id)->delete();
-        return Response()->json($pembelian);
-    }
-
     public function bahanBaku($id)
     {
         $bahanbaku = Bahanbaku::where('id', $id)->get();
@@ -105,47 +68,87 @@ class PembelianController extends Controller
 
     public function simpan(Request $request)
     {
-        $no_po = $request->no_po;
         $bahanbaku_id = $request->bahanbaku_id;
-        $supplier_id = $request->supplier_id;
         $qty = $request->qty;
         $harga = $request->harga;
-        $subtotal = $request->subtotal;
-        $users_id = $request->users_id;
+        $total = $request->total;
 
+        $pembelian = Pembelian::create([
+            'no_po' => $request->no_po,
+            'supplier_id' => $request->supplier_id,
+            'users_id' => Auth::user()->id,
+            'subtotal' => $request->subtotal,
+        ]);
+        // dd($pembelian);
         for ($i = 0; $i < count($bahanbaku_id); $i++) {
-            $data = new Pembelian();
-            $data->no_po = $no_po;
-            $data->users_id = $users_id;
+            $data = new Relation_pembelian();
             $data->bahanbaku_id = $bahanbaku_id[$i];
-            $data->supplier_id = $supplier_id[$i];
-            $data->qty = $qty[$i];
+            $data->pembelian_id = $pembelian->id;
             $data->harga = $harga[$i];
-            $data->subtotal = $subtotal[$i];
-            $data->purchaseorder()->saveMany($data->no_po);
+            $data->qty = $qty[$i];
+            $data->total = $total[$i];
+            $data->save();
         }
-        $success = Alert::success('Success Title', 'Success Message');
-        return Response()->json($success);
+        return Response()->json($pembelian);
     }
 
-    public function create()
+    public function detail(Request $request)
     {
-        $tanggal = $purchase = Pembelian::latest()->first();
-        $first = 'PO';
-        $tahun = date('mY');
-        if ($purchase == null) {
-            $nomor = '0001';
+        $where = ['id' => $request->id];
+        $permintaan = Pembelian::where($where)
+            ->with(['bahanbaku', 'user', 'supplier'])
+            ->first();
+
+        if ($permintaan) {
+            $data = [
+                'id' => $permintaan->id,
+                'nama_user' => $permintaan->user->nama_user ?? 'Tidak ditemukan',
+                'nama_bahanbaku' => $permintaan->bahanbaku->nama_bahanbaku ?? 'Tidak ditemukan',
+                'qty' => $permintaan->qty,
+                'status' => $permintaan->status,
+                'bb_stok' => $permintaan->bahanbaku->stok,
+                'created_at' => $permintaan->created_at->format('d-m-Y'),
+            ];
+            return response()->json($data);
         } else {
-            $nomor = substr($purchase->no_po, 8, 4) + 1;
-            $nomor = str_pad($nomor, 4, '0', STR_PAD_LEFT);
+            return response()->json(['error' => 'Permintaan tidak ditemukan'], 404);
         }
-        $no_po = $first . $tahun . $nomor;
-        $bahanbaku = Bahanbaku::all();
-        $supplier = Supplier::all();
-        $users = Auth::user()->id;
+    }
 
-        $pembelian = DB::table('pembelian')->join('users', 'users.id', '=', 'pembelian.users_id')->join('bahanbaku', 'bahanbaku.id', 'pembelian.bahanbaku_id')->join('supplier', 'supplier.id', 'pembelian.supplier_id')->select('pembelian.*', 'users.nama_user', 'bahanbaku.nama_bahanbaku', 'bahanbaku.harga', 'supplier.nama_supplier')->get();
+    public function edit(Request $request)
+    {
+        $pembelian = Pembelian::with('user', 'supplier')
+            ->where('id', $request->id)
+            ->first();
 
-        return view('manajemen.pembelian.create', compact('no_po', 'bahanbaku', 'supplier', 'users', 'pembelian'));
+        if ($pembelian) {
+            // Cek apakah status pembelian memungkinkan untuk diedit
+            if ($pembelian->status != 1) {
+                return response()->json(['error' => 'Pembelian ini tidak dapat diedit.'], 403);
+            }
+
+            // Ambil item terkait dengan pembelian
+            $items = Relation_pembelian::with('pembelian.supplier', 'pembelian.user')->where('pembelian_id', $pembelian->id)->get();
+            $response = [
+                'id' => $pembelian->id,
+                'no_po' => $pembelian->no_po,
+                'users_id' => $pembelian->users_id,
+                'supplier_id' => $pembelian->supplier_id,
+                'subtotal' => $pembelian->subtotal,
+                'items' => $items->map(function ($item) {
+                    return [
+                        'bahanbaku_id' => $item->bahanbaku_id,
+                        'nama_bahanbaku' => BahanBaku::find($item->bahanbaku_id)->nama_bahanbaku,
+                        'qty' => $item->qty,
+                        'harga' => BahanBaku::find($item->bahanbaku_id)->harga,
+                        'total' => $item->total,
+                    ];
+                }),
+            ];
+
+            return response()->json($response);
+        } else {
+            return response()->json(['error' => 'Pembelian tidak ditemukan.'], 404);
+        }
     }
 }

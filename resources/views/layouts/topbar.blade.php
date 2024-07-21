@@ -184,8 +184,8 @@
              <li class="nav-item dropdown">
                  <a href="javascript:void(0);" class="dropdown-toggle dropdown-toggle-nocaret"
                      data-bs-toggle="dropdown">
-                     <img src="{{ URL::asset('build/images/users/' . Auth::user()->foto) }}" class="rounded-circle p-1 border" width="45"
-                         height="45" alt="">
+                     <img src="{{ URL::asset('build/images/users/' . Auth::user()->foto) }}"
+                         class="rounded-circle p-1 border" width="45" height="45" alt="">
                  </a>
                  <div class="dropdown-menu dropdown-user dropdown-menu-end shadow">
                      <a class="dropdown-item  gap-2 py-2" href="javascript:;">
@@ -197,8 +197,10 @@
                          </div>
                      </a>
                      <hr class="dropdown-divider">
-                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;"><i
-                             class="material-icons-outlined">person_outline</i>Profile</a>
+                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ url('/user/profile') }}">
+                         <i class="material-icons-outlined">person_outline</i>
+                         Profile
+                     </a>
                      <hr class="dropdown-divider">
                      <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:void(0);"
                          onclick="document.getElementById('logout-form').submit()"><i

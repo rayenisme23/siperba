@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pembelian extends Model
 {
@@ -11,10 +12,21 @@ class Pembelian extends Model
 
     protected $table = 'pembelian';
 
-    protected $fillable = ['no_po', 'supplier_id', 'bahanbaku_id',  'qty', 'harga', 'subtotal', 'users_id', 'status'];
+    protected $guarded = [];
 
-    public function purchaseorder()
+
+    public function user()
     {
-        return $this->belongsToMany(Bahanbaku::class);
+        return $this->hasMany(User::class, 'id', 'users_id');
+    }
+
+    public function supplier()
+    {
+        return $this->hasMany(Supplier::class, 'id', 'supplier_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(Relation_pembelian::class, 'pembelian_id');
     }
 }

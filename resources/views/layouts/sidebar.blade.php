@@ -22,78 +22,152 @@
                    </a>
                </li>
 
-               <li class="menu-label">data master</li>
+               @if (Auth::user()->hasRole('Administrator'))
+                   <li class="menu-label">data master</li>
+                   <li>
+                       <a href="{{ url('/master/user') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">person_outline</i>
+                           </div>
+                           <div class="menu-title">Data User</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="{{ url('/master/bahanbaku') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">view_in_ar</i>
+                           </div>
+                           <div class="menu-title">Data Bahan Baku</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="{{ url('/master/departemen') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">maps_home_work</i>
+                           </div>
+                           <div class="menu-title">Data Departemen</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="{{ url('/master/supplier') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">person_3</i>
+                           </div>
+                           <div class="menu-title">Data Supplier</div>
+                       </a>
+                   </li>
 
-               <li>
-                   <a href="{{ url('/master/user') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">person_outline</i>
-                       </div>
-                       <div class="menu-title">Data User</div>
-                   </a>
-               </li>
-               <li>
-                   <a href="{{ url('/master/bahanbaku') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">view_in_ar</i>
-                       </div>
-                       <div class="menu-title">Data Bahan Baku</div>
-                   </a>
-               </li>
-               <li>
-                   <a href="{{ url('/master/departemen') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">maps_home_work</i>
-                       </div>
-                       <div class="menu-title">Data Departemen</div>
-                   </a>
-               </li>
-               <li>
-                   <a href="{{ url('/master/supplier') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">person_3</i>
-                       </div>
-                       <div class="menu-title">Data Supplier</div>
-                   </a>
-               </li>
+                   <li class="menu-label">Laporan</li>
+                   <li>
+                       <a href="{{ url('/permintaan') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">bookmarks</i>
+                           </div>
+                           <div class="menu-title">Permintaan</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="{{ url('/pembelian') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">collections_bookmark</i>
+                           </div>
+                           <div class="menu-title">Pembelian</div>
+                       </a>
+                   </li>
+               @endif
 
-               <li class="menu-label">Manajemen</li>
+               @if (Auth::user()->hasRole('Gudang'))
+                   <li class="menu-label">data master</li>
+                   <li>
+                       <a href="{{ url('/master/bahanbaku') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">view_in_ar</i>
+                           </div>
+                           <div class="menu-title">Data Bahan Baku</div>
+                       </a>
+                   </li>
 
-               <li>
-                   <a href="{{ url('/manajemen/permintaan') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">note_add</i>
-                       </div>
-                       <div class="menu-title">Permintaan</div>
-                   </a>
-               </li>
-               <li>
-                   <a href="{{ url('/manajemen/pembelian') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">receipt_long</i>
-                       </div>
-                       <div class="menu-title">Pembelian</div>
-                   </a>
-               </li>
+                   <li class="menu-label">Manajemen</li>
+                   <li>
+                    <a href="{{ url('/manajemen/permintaan') }}">
+                        <div class="parent-icon"><i class="material-icons-outlined">note_add</i>
+                        </div>
+                        <div class="menu-title">Permintaan</div>
+                    </a>
+                </li>
+                   <li>
+                       <a href="{{ url('/manajemen/pembelian') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">receipt_long</i>
+                           </div>
+                           <div class="menu-title">Pembelian</div>
+                       </a>
+                   </li>
 
-               <li>
-                   <a href="{{ url('/pembelian') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">receipt_long</i>
-                       </div>
-                       <div class="menu-title">Pembelian</div>
-                   </a>
-               </li>
+                   <li class="menu-label">Laporan</li>
+                   <li>
+                       <a href="{{ url('/permintaan') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">bookmarks</i>
+                           </div>
+                           <div class="menu-title">Permintaan</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="{{ url('/pembelian') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">collections_bookmark</i>
+                           </div>
+                           <div class="menu-title">Pembelian</div>
+                       </a>
+                   </li>
+               @endif
 
-               <li class="menu-label">Laporan</li>
+               @if (Auth::user()->hasRole('Produksi'))
+                   <li class="menu-label">Manajemen</li>
+                   <li>
+                       <a href="{{ url('/manajemen/permintaan') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">note_add</i>
+                           </div>
+                           <div class="menu-title">Permintaan</div>
+                       </a>
+                   </li>
+                   <li class="menu-label">Laporan</li>
 
-               <li>
-                   <a href="{{ url('/permintaan') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">bookmarks</i>
-                       </div>
-                       <div class="menu-title">Permintaan</div>
-                   </a>
-               </li>
-               <li>
-                   <a href="{{ url('/pembelian') }}">
-                       <div class="parent-icon"><i class="material-icons-outlined">collections_bookmark</i>
-                       </div>
-                       <div class="menu-title">Pembelian</div>
-                   </a>
-               </li>
+                   <li>
+                       <a href="{{ url('/permintaan') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">bookmarks</i>
+                           </div>
+                           <div class="menu-title">Permintaan</div>
+                       </a>
+                   </li>
+               @endif
+
+               @if (Auth::user()->hasRole('Pembelian'))
+                   <li class="menu-label">data master</li>
+                   <li>
+                       <a href="{{ url('/master/bahanbaku') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">view_in_ar</i>
+                           </div>
+                           <div class="menu-title">Data Bahan Baku</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="{{ url('/master/supplier') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">person_3</i>
+                           </div>
+                           <div class="menu-title">Data Supplier</div>
+                       </a>
+                   </li>
+
+                   <li class="menu-label">Manajemen</li>
+                   <li>
+                       <a href="{{ url('/manajemen/pembelian') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">receipt_long</i>
+                           </div>
+                           <div class="menu-title">Pembelian</div>
+                       </a>
+                   </li>
+                   <li class="menu-label">Laporan</li>
+                   <li>
+                       <a href="{{ url('/pembelian') }}">
+                           <div class="parent-icon"><i class="material-icons-outlined">collections_bookmark</i>
+                           </div>
+                           <div class="menu-title">Pembelian</div>
+                       </a>
+                   </li>
+               @endif
+
            </ul>
 
            <!--end navigation-->

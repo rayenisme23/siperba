@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('bahanbaku_id');
             $table->integer('users_id');
             $table->integer('qty');
-            $table->enum('status', ['Diproses', 'Diterima', 'Ditolak'])->default('Diproses');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

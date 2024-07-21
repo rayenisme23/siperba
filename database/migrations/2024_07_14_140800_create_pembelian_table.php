@@ -15,12 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('no_po');
             $table->integer('supplier_id');
-            $table->integer('bahanbaku_id');
-            $table->integer('qty');
-            $table->integer('harga');
             $table->integer('subtotal');
             $table->integer('users_id');
-            $table->enum('status', ['Diproses', 'Diterima'])->default('Diproses');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

@@ -11,5 +11,5 @@ class Bahanbaku extends Model
 
     protected $table = 'bahanbaku';
 
-    protected $fillable = ['nama_bahanbaku', 'harga', 'satuan', 'stok', 'tgl_exp', 'foto_bahanbaku'];
+    protected $guarded = [];
 }
