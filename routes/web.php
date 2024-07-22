@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanbakuController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PermintaanController;
 use App\Http\Controllers\ProfileController;
@@ -85,8 +86,14 @@ Route::middleware('auth',)->group(function () {
     Route::get('/pembelian-supp/{id}', [PembelianController::class, 'supplier'])->middleware('role:Pembelian|Gudang');
     Route::post('/pembelian-destroy', [PembelianController::class, 'destroy'])->middleware('role:Pembelian');
     Route::post('/pembelian-simpan', [PembelianController::class, 'simpan'])->middleware('role:Pembelian|Gudang');
-    Route::post('/pembelian-detail', [PembelianController::class, 'detail'])->middleware('role:Pembelian|Gudang');
+    Route::post('/pembelian/hapus-bahanbaku', [PembelianController::class, 'hapusBahanbaku'])->middleware('role:Pembelian');
+    Route::post('/pembelian/tambah-bahanbaku', [PembelianController::class, 'tambahBahanbaku'])->middleware('role:Pembelian');
+
     // Permintaan-detail
-    Route::get('/permintaan-detail', [PermintaanController::class, 'detail'])->middleware('role:Gudang');
-    Route::post('/permintaan-terima', [PermintaanController::class, 'terimastatus'])->middleware('role:Gudang');
+    Route::get('/pembelian-detail', [PembelianController::class, 'detail'])->middleware('role:Gudang');
+    Route::post('/pembelian-terima', [PembelianController::class, 'terimastatus'])->middleware('role:Gudang');
+
+    // Laporan
+    Route::get('/laporan/pembelian', [LaporanController::class, 'pembelian'])->middleware('role:Administrator|Gudang|Pembelian');
+    Route::get('/laporan/permintaan', [LaporanController::class, 'permintaan'])->middleware('role:Administrator|Gudang|Permintaan');
 });

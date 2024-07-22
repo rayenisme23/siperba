@@ -55,14 +55,14 @@
 
                    <li class="menu-label">Laporan</li>
                    <li>
-                       <a href="{{ url('/permintaan') }}">
+                       <a href="{{ url('/laporan/permintaan') }}">
                            <div class="parent-icon"><i class="material-icons-outlined">bookmarks</i>
                            </div>
                            <div class="menu-title">Permintaan</div>
                        </a>
                    </li>
                    <li>
-                       <a href="{{ url('/pembelian') }}">
+                       <a href="{{ url('/laporan/pembelian') }}">
                            <div class="parent-icon"><i class="material-icons-outlined">collections_bookmark</i>
                            </div>
                            <div class="menu-title">Pembelian</div>
@@ -98,14 +98,14 @@
 
                    <li class="menu-label">Laporan</li>
                    <li>
-                       <a href="{{ url('/permintaan') }}">
+                       <a href="{{ url('/laporan/permintaan') }}">
                            <div class="parent-icon"><i class="material-icons-outlined">bookmarks</i>
                            </div>
                            <div class="menu-title">Permintaan</div>
                        </a>
                    </li>
                    <li>
-                       <a href="{{ url('/pembelian') }}">
+                       <a href="{{ url('/laporan/pembelian') }}">
                            <div class="parent-icon"><i class="material-icons-outlined">collections_bookmark</i>
                            </div>
                            <div class="menu-title">Pembelian</div>
@@ -125,7 +125,7 @@
                    <li class="menu-label">Laporan</li>
 
                    <li>
-                       <a href="{{ url('/permintaan') }}">
+                       <a href="{{ url('/laporan/permintaan') }}">
                            <div class="parent-icon"><i class="material-icons-outlined">bookmarks</i>
                            </div>
                            <div class="menu-title">Permintaan</div>
@@ -160,7 +160,7 @@
                    </li>
                    <li class="menu-label">Laporan</li>
                    <li>
-                       <a href="{{ url('/pembelian') }}">
+                       <a href="{{ url('/laporan/pembelian') }}">
                            <div class="parent-icon"><i class="material-icons-outlined">collections_bookmark</i>
                            </div>
                            <div class="menu-title">Pembelian</div>

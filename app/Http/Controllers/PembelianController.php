@@ -6,6 +6,7 @@ use App\Models\Bahanbaku;
 use App\Models\Pembelian;
 use App\Models\Relation_pembelian;
 use App\Models\Supplier;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -39,10 +40,14 @@ class PembelianController extends Controller
                         Aksi
                     </button>
                     <ul class="dropdown-menu border">
+                    @role("Gudang")
                         <li><a class="dropdown-item d-flex align-items-center text-sm" href="javascript:void(0);" onClick="detailFunc({{ $id }})">Detail</a></li>
+                    @endrole
+                    @role("Pembelian")
                         <li><a class="dropdown-item d-flex align-items-center text-sm" href="javascript:void(0);" onClick="editFunc({{ $id }})">Edit</a></li>
                         <li><a class="dropdown-item d-flex align-items-center text-sm" href="javascript:void(0);" onClick="deleteFunc({{ $id }})">Delete</a>
                         </li>
+                    @endrole
                     </ul>
                 </div>
                 ',
@@ -95,60 +100,117 @@ class PembelianController extends Controller
     public function detail(Request $request)
     {
         $where = ['id' => $request->id];
-        $permintaan = Pembelian::where($where)
-            ->with(['bahanbaku', 'user', 'supplier'])
-            ->first();
 
-        if ($permintaan) {
-            $data = [
-                'id' => $permintaan->id,
-                'nama_user' => $permintaan->user->nama_user ?? 'Tidak ditemukan',
-                'nama_bahanbaku' => $permintaan->bahanbaku->nama_bahanbaku ?? 'Tidak ditemukan',
-                'qty' => $permintaan->qty,
-                'status' => $permintaan->status,
-                'bb_stok' => $permintaan->bahanbaku->stok,
-                'created_at' => $permintaan->created_at->format('d-m-Y'),
-            ];
-            return response()->json($data);
-        } else {
-            return response()->json(['error' => 'Permintaan tidak ditemukan'], 404);
+        try {
+            $pembelian = Pembelian::with('relation_pembelian.bahanBaku')
+                ->where($where)
+                ->firstOrFail();
+
+            return response()->json([
+                'pembelian' => $pembelian,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Pembelian tidak ditemukan.',
+            ], 404);
         }
     }
 
     public function edit(Request $request)
     {
-        $pembelian = Pembelian::with('user', 'supplier')
-            ->where('id', $request->id)
-            ->first();
+        $where = ['id' => $request->id];
 
-        if ($pembelian) {
-            // Cek apakah status pembelian memungkinkan untuk diedit
-            if ($pembelian->status != 1) {
-                return response()->json(['error' => 'Pembelian ini tidak dapat diedit.'], 403);
+        try {
+            $pembelian = Pembelian::with('relation_pembelian.bahanBaku', 'user', 'supplier')
+                ->where($where)
+                ->firstOrFail();
+
+            if ($pembelian) {
+                // Cek apakah status pembelian memungkinkan untuk diedit
+                if ($pembelian->status != 1) {
+                    return response()->json(['error' => 'Pembelian ini tidak dapat diedit.'], 403);
+                }
+
+                // Ambil item terkait dengan pembelian
+                $items = Relation_pembelian::with('pembelian.supplier', 'pembelian.user')->where('pembelian_id', $pembelian->id)->get();
+                $tanggal = Carbon::parse($pembelian->created_at)->format('d-m-Y');
+                $response = [
+                    'pembelian' => $pembelian,
+                    'tanggal' => $tanggal,
+                    'items' => $items->map(function ($item) {
+                        return [
+                            'bahanbaku_id' => $item->bahanbaku_id,
+                            'nama_bahanbaku' => BahanBaku::find($item->bahanbaku_id)->nama_bahanbaku,
+                            'qty' => $item->qty,
+                            'harga' => BahanBaku::find($item->bahanbaku_id)->harga,
+                            'total' => $item->total,
+                        ];
+                    }),
+                ];
+
+                return response()->json($response);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Pembelian tidak ditemukan.',
+            ], 404);
+        }
+    }
 
-            // Ambil item terkait dengan pembelian
-            $items = Relation_pembelian::with('pembelian.supplier', 'pembelian.user')->where('pembelian_id', $pembelian->id)->get();
-            $response = [
-                'id' => $pembelian->id,
-                'no_po' => $pembelian->no_po,
-                'users_id' => $pembelian->users_id,
-                'supplier_id' => $pembelian->supplier_id,
-                'subtotal' => $pembelian->subtotal,
-                'items' => $items->map(function ($item) {
-                    return [
-                        'bahanbaku_id' => $item->bahanbaku_id,
-                        'nama_bahanbaku' => BahanBaku::find($item->bahanbaku_id)->nama_bahanbaku,
-                        'qty' => $item->qty,
-                        'harga' => BahanBaku::find($item->bahanbaku_id)->harga,
-                        'total' => $item->total,
-                    ];
-                }),
-            ];
+    public function hapusBahanbaku(Request $request)
+    {
+        try {
+            $deleted = Relation_pembelian::where('bahanbaku_id', $request->bahanbaku_id)->where('pembelian_id', $request->pembelian_id)->delete();
 
-            return response()->json($response);
+            if ($deleted) {
+                $pembelian = Pembelian::find($request->pembelian_id);
+                if ($pembelian) {
+                    $newSubtotal = $pembelian->calculateSubtotal();
+                    $pembelian->subtotal = $newSubtotal;
+                    $pembelian->save();
+
+                    return response()->json(['message' => 'Data berhasil dihapus dan subtotal diperbarui'], 200);
+                } else {
+                    return response()->json(['message' => 'Data tidak ditemukan'], 404);
+                }
+            } else {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
+    public function tambahBahanbaku(Request $request)
+    {
+        $pembelian_id = $request->pembelian_id;
+        $bahanbaku_id = $request->bahanbaku_id;
+        $qty = $request->qty;
+        $harga = $request->harga;
+        $total = $request->total;
+
+        for ($i = 0; $i < count($bahanbaku_id); $i++) {
+            $existingRelation = Relation_pembelian::where('bahanbaku_id', $bahanbaku_id[$i])
+                ->where('pembelian_id', $pembelian_id)->first();
+            if (!$existingRelation) {
+                $data = new Relation_pembelian();
+                $data->bahanbaku_id = $bahanbaku_id[$i];
+                $data->pembelian_id = $pembelian_id;
+                $data->harga = $harga[$i];
+                $data->qty = $qty[$i];
+                $data->total = $total[$i];
+                $data->save();
+            }
+        }
+        $pembelian = Pembelian::find($pembelian_id);
+        if ($pembelian) {
+            $newSubtotal = $pembelian->calculateSubtotal();
+            $pembelian->subtotal = $newSubtotal;
+            $pembelian->save();
+
+            return response()->json(['message' => 'Data berhasil disimpan dan subtotal diperbarui'], 200);
         } else {
-            return response()->json(['error' => 'Pembelian tidak ditemukan.'], 404);
+            return response()->json(['message' => 'Pembelian tidak ditemukan'], 404);
         }
     }
 }

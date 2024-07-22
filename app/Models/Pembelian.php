@@ -25,8 +25,27 @@ class Pembelian extends Model
         return $this->hasMany(Supplier::class, 'id', 'supplier_id');
     }
 
-    public function items()
+    public function relation_pembelian()
     {
-        return $this->hasMany(Relation_pembelian::class, 'pembelian_id');
+        return $this->hasMany(Relation_pembelian::class, 'pembelian_id', 'id');
+    }
+
+    public function calculateSubtotal()
+    {
+        $items = $this->relation_pembelian()
+            ->where('pembelian_id', $this->id)
+            ->get();
+
+        $subtotal = 0;
+
+        if ($items->count() == 1) {
+            $subtotal = $items->first()->total;
+        } else {
+            foreach ($items as $item) {
+                $subtotal += $item->total;
+            }
+        }
+
+        return $subtotal;
     }
 }

@@ -15,11 +15,11 @@ class Relation_pembelian extends Model
 
     public function pembelian()
     {
-        return $this->hasMany(Pembelian::class, 'id', 'pembelian_id');
+        return $this->belongsTo(Pembelian::class, 'pembelian_id', 'id');
     }
 
     public function bahanBaku()
     {
-        return $this->hasMany(Bahanbaku::class, 'id', 'bahanbaku_id');
+        return $this->belongsTo(Bahanbaku::class,  'bahanbaku_id', 'id');
     }
 }
