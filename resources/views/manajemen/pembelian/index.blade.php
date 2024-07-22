@@ -296,121 +296,61 @@
             <div class="modal-content">
                 <div class="modal-header border-bottom-2 py-2">
                     <h5 class="modal-title">Detail Pembelian</h5>
-                    <a href="javascript:;" id="close" class="primaery-menu-close">
+                    <a href="javascript:;" id="detail_close" class="primaery-menu-close">
                         <i class="material-icons-outlined">close</i>
                     </a>
                 </div>
                 <div class="modal-body">
-                    <div class="form-body">
-                        <form class="row g-3" action="javascript:void(0)" method="POST" id="detailForm"
-                            name="detailForm" autocomplete="off" enctype="multipart/form-data">
-                            @csrf
-                            <input type="hidden" name="id" id="id">
-
-                            <div class="d-flex justify-content-between px-2">
-                                <table class="fw-bold mb-0">
-                                    <tr>
-                                        <th>
-                                            <p>Nama User</p>
-                                        </th>
-                                        <th>
-                                            <p class="mx-4">:</p>
-                                        </th>
-                                        <th>
-                                            <p id="dt_namauser"></p>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <p>Nomor PO</p>
-                                        </td>
-                                        <td>
-                                            <p class="mx-4">:</p>
-                                        </td>
-                                        <td>
-                                            <p id="dt_no_po"></p>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <div class="d-flex fw-bold">
-                                    <p>Tanggal</p>
-                                    <p class="mx-4">:</p>
-                                    <p id="dt_tanggal"></p>
+                    <form class="row g-3" action="javascript:void(0)" method="POST" name="pembelianForm"
+                        autocomplete="off" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" id="id" name="id">
+                        <div class="border m-2 p-3">
+                            <div class="d-flex justify-content-center align-items-center mb-2">
+                                <img class="ms-3" src="{{ URL::asset('build/images/logo-indoneptune.png') }}"
+                                    width="90" alt="">
+                                <div class="ms-2">
+                                    <p class="mb-0 fw-bold">PT. INDONEPTUNE NET</p>
+                                    <p class="mb-0 fw-bold">MANUFACTURING</p>
                                 </div>
                             </div>
+                            <div class="mb-2">
+                                <div class="d-flex">
+                                    <p class="mb-0">Kepada Yth.</p>
+                                    <span class="ms-auto">Bandung, <span id="dt_tanggal"></span></span>
+                                </div>
+                                <p class="mb-0 fw-bold" id="dt_nama_supplier"></p>
+                                <p class="mb-0" id="dt_alamat"></p>
+                                <p class="mb-0" id="dt_no_telp"></p>
+                            </div>
+                            <div class="text-center mb-3">
+                                <span class="mb-0 fw-bold fs-5 text-center text-decoration-underline">PURCHASE
+                                    ORDER</span><br>
+                                <small class="mt-0 fw-bold">NO. PO : <span id="dt_no_po"></span></small>
+                            </div>
+                            <table class="table table-striped" id="poTable">
+                            </table>
                             <hr>
-                            <div class="d-flex justify-content-between">
-                                <div class="col-md-6">
-                                    {{-- Supplier --}}
-                                    <div class="input-group mb-3 pe-3">
-                                        <label class="input-group-text" for="supplier_id">
-                                            <span class="material-icons-outlined">person_3</span>
-                                        </label>
-                                        <select class="form-select" id="supplier_id" name="supplier_id">
-                                            <option selected disabled>Supplier</option>
-                                            @foreach ($supplier as $sp)
-                                                <option value="{{ $sp->id }}">{{ $sp->nama_supplier }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    {{-- Bahanbaku --}}
-                                    <div class="input-group mb-3 pe-3">
-                                        <label class="input-group-text" for="bahanbaku_id">
-                                            <span class="material-icons-outlined">view_in_ar</span>
-                                        </label>
-                                        <select class="form-select" id="bahanbaku_id" name="bahanbaku_id">
-                                            <option selected disabled>Bahan Baku</option>
-                                            @foreach ($bahanbaku as $bb)
-                                                <option value="{{ $bb->id }}">{{ $bb->nama_bahanbaku }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    {{-- Harga --}}
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text" id="basic-addon1">
-                                            <span class="material-icons-outlined">paid</span>
-                                        </span>
-                                        <input type="text" class="form-control" id="harga" name="harga"
-                                            aria-label="Username" aria-describedby="basic-addon1" readonly>
-                                    </div>
-                                    {{-- Jumlah --}}
-                                    <div class="input-group">
-                                        <span class="input-group-text" id="basic-addon1">
-                                            <span class="material-icons-outlined">inventory_2</span>
-                                        </span>
-                                        <input type="number" class="form-control" id="qty" name="qty"
-                                            placeholder="Masukkan jumlah" aria-label="Username"
-                                            aria-describedby="basic-addon1">
-                                    </div>
-                                </div>
+                            <div class="mb-5">
+                                <small class="fw-medium">Kami ucapkan terima kasih atas perhatian dan
+                                    kerjasamanya.</small><br>
+                                <small class="fw-medium">Hormat Kami,</small>
                             </div>
-                            <div class="d-flex gap-5 justify-content-center align-items-center">
-                                <button class="btn btn-sm btn-success px-4" id="tambah">Tambah</button>
+                            <br><br>
+                            <div class="text-center bg-primary p-2 text-white">
+                                <small class="mb-0 fw-bold">PT. INDONEPTUNE NET MANUFACTURING</small><br>
+                                <small class="mb-0 fw-bold">Jl. Raya Provinsi Bandung - Garut KM. 25 Rancaekek, Kabupaten
+                                    Bandung 40394 - INDONESIA</small><br>
+                                <small class="mb-0 fw-bold">Phone (022) 7798042 - Facs. (022) 7797840, 77903567</small>
                             </div>
-                            <div class="border">
-                                <table class="table table-striped" id="pembelianTable">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th>Nama Bahan Baku</th>
-                                            <th>Supplier</th>
-                                            <th>QTY</th>
-                                            <th>Harga</th>
-                                            <th>Total</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                    </div>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     {{-- Button --}}
                     <div class="col-md-12">
                         <div class="d-flex justify-content-end align-items-center gap-2">
-                            <button type="button" id="cancel" class="btn btn-sm btn-secondary px-4">Batal</button>
-                            <button type="submit" class="btn btn-sm btn-primary px-4" id="btn-simpan">Tambah</button>
+                            <button type="button" id="detail_cancel" class="btn btn-sm btn-secondary px-4">Kembali</button>
+                            <button type="button" class="btn btn-sm btn-primary px-4" id="btn_terima_po">Terima</button>
                         </div>
                     </div>
                 </div>
@@ -870,8 +810,6 @@
             })
         })
 
-
-
         function editFunc(id) {
             $.ajax({
                 type: "POST",
@@ -881,7 +819,6 @@
                 },
                 dataType: 'json',
                 success: function(res) {
-                    console.log(res.pembelian);
                     $('#editModal').modal('show');
                     $('#pembelian_id').val(res.pembelian.id);
                     $('#edit_namauser').text(res.pembelian.user[0].nama_user);
@@ -892,6 +829,7 @@
                     $('#qty').val(res.qty);
                     $('.modal-footer').addClass('d-none');
                     $('.edit_tambahBaru').addClass('d-none');
+
                     function formatRupiah(angka) {
                         var number_string = angka.toString().replace(/[^,\d]/g, ''),
                             split = number_string.split(','),
@@ -948,8 +886,6 @@
         $(document).on('click', '#edit_hapus', function() {
             let rowId = $(this).data('row');
             let pembelian_id = $('#pembelian_id').val();
-            console.log(rowId);
-            console.log(pembelian_id);
             swal.fire({
                 title: "Yakin ingin menghapus data ini?",
                 icon: 'question',
@@ -975,7 +911,6 @@
         })
 
         function detailFunc(id) {
-
             $.ajax({
                 type: "GET",
                 url: "{{ url('pembelian-detail') }}",
@@ -985,11 +920,95 @@
                 dataType: 'json',
                 success: function(res) {
                     $('#detailModal').modal('show');
-                    console.log(res);
+                    $('.modal-footer').removeClass('d-none');
+                    $('#dt_tanggal').text(res.tanggal);
+                    $('#dt_nama_supplier').text(res.supplier[0].nama_supplier);
+                    $('#dt_alamat').text(res.supplier[0].alamat);
+                    $('#dt_no_telp').text(res.supplier[0].no_hp);
+                    $('#id').val(res.pembelian.id);
+                    $('#dt_no_po').text(res.pembelian.no_po);
+                    if (res.pembelian.status == 1) {
+                        $('#btn_terima_po').remove('d-none');
+                    }else{
+                        $('#btn_terima_po').addClass('d-none');
+                    }
+                    let bahanbaku = res.bahanbaku;
+                    let nomor = 1;
+                    let subtotal = res.pembelian.subtotal;
+                    let html =
+                        "<thead><tr><th class='border text-center'>No</th><th class='border text-center'>Nama Bahan Baku</th><th class='border text-center'>Qty</th><th class='border text-center'>Harga</th><th class='border text-center'>Total</th></tr></thead><tbody>";
+
+                    function formatRupiah(angka) {
+                        var number_string = angka.toString().replace(/[^,\d]/g, ''),
+                            split = number_string.split(','),
+                            sisa = split[0].length % 3,
+                            rupiah = split[0].substr(0, sisa),
+                            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                        if (ribuan) {
+                            separator = sisa ? '.' : '';
+                            rupiah += separator + ribuan.join('.');
+                        }
+
+                        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                        return 'Rp ' + rupiah;
+                    }
+
+                    bahanbaku.forEach(function(item) {
+                        let baris = nomor++;
+                        html += "<tr>";
+                        html += "<td class='border text-center'>" + baris + "</td>";
+                        html += "<td class='border'>" + item.bahan_baku.nama_bahanbaku + "</td>";
+                        html += "<td class='border text-center'>" + item.qty + "</td>";
+                        html += "<td class='border text-center'>" + formatRupiah(item.bahan_baku
+                            .harga) + "</td>";
+                        html += "<td class='border text-center'>" + formatRupiah(item.total) + "</td>";
+                        html += "</tr>";
+                    });
+                    html += "<td colspan='4' class='border fw-bold'>Subtotal</td>";
+                    html += "<td colspan='4' class='border text-center fw-bold'>" + formatRupiah(subtotal) +
+                        "</td>";
+                    html += "</tbody>";
+                    $('#poTable').html(html);
                 },
                 error: function(xhr) {
                     console.log(xhr);
                 }
+            });
+
+            $('#btn_terima_po').on('click', function() {
+                var id = $('#id').val();
+                swal.fire({
+                    title: "Yakin mengubah status PO?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: "Ya!",
+                    cancelButtonText: "Batal",
+                    reverseButtons: false
+                }).then(function() {
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ url('pembelian/terima-po') }}",
+                        data: {
+                            id: id,
+                            status: 2
+                        },
+                        dataType: 'json',
+                        success: function(res) {
+                            swal.fire("Berhasil!", res.message, "success");
+                            $('#detailModal').modal('hide');
+                            var oTable = $('#example2').dataTable();
+                            oTable.fnDraw(false);
+                        }
+                    });
+                })
+            });
+
+            $('#detail_close').on('click', function() {
+                $('#detailModal').modal('hide');
+            });
+
+            $('#detail_cancel').on('click', function() {
+                $('#detailModal').modal('hide');
             });
         }
     </script>

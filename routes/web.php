@@ -91,7 +91,7 @@ Route::middleware('auth',)->group(function () {
 
     // Permintaan-detail
     Route::get('/pembelian-detail', [PembelianController::class, 'detail'])->middleware('role:Gudang');
-    Route::post('/pembelian-terima', [PembelianController::class, 'terimastatus'])->middleware('role:Gudang');
+    Route::post('pembelian/terima-po', [PembelianController::class, 'terimastatus'])->middleware('role:Gudang');
 
     // Laporan
     Route::get('/laporan/pembelian', [LaporanController::class, 'pembelian'])->middleware('role:Administrator|Gudang|Pembelian');

@@ -405,7 +405,7 @@
             var id = $('#id').val();
             $.ajax({
                 type: "POST",
-                url: "{{ url('permintaan-terima') }}",
+                url: "{{ url('pembelian/terima-po') }}",
                 data: {
                     id: id,
                     status: 2

@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class PembelianController extends Controller
@@ -102,12 +103,16 @@ class PembelianController extends Controller
         $where = ['id' => $request->id];
 
         try {
-            $pembelian = Pembelian::with('relation_pembelian.bahanBaku')
+            $pembelian = Pembelian::with('relation_pembelian.bahanBaku', 'supplier')
                 ->where($where)
                 ->firstOrFail();
 
+            $tanggal = Carbon::parse($pembelian->created_at)->format('d-m-Y');
             return response()->json([
                 'pembelian' => $pembelian,
+                'supplier' => $pembelian->supplier,
+                'bahanbaku' => $pembelian->relation_pembelian,
+                'tanggal' => $tanggal,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -211,6 +216,29 @@ class PembelianController extends Controller
             return response()->json(['message' => 'Data berhasil disimpan dan subtotal diperbarui'], 200);
         } else {
             return response()->json(['message' => 'Pembelian tidak ditemukan'], 404);
+        }
+    }
+
+    public function terimastatus(Request $request)
+    {
+        $pembelian = Pembelian::find($request->id);
+        if ($pembelian) {
+            DB::transaction(function () use ($pembelian, $request) {
+                $pembelian->status = $request->status;
+                $pembelian->save();
+
+                if ($request->status == 2) {
+                    foreach ($pembelian->relation_pembelian as $relation) {
+                        $bahanbaku = $relation->bahanBaku;
+                        $bahanbaku->stok += $relation->qty;
+                        $bahanbaku->save();
+                    }
+                }
+            });
+
+            return response()->json(['success' => 'Status permintaan berhasil diperbarui.']);
+        } else {
+            return response()->json(['error' => 'Permintaan tidak ditemukan.'], 404);
         }
     }
 }
