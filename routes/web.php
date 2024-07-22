@@ -17,15 +17,6 @@ use Illuminate\Support\Facades\Auth;
 Auth::routes();
 
 Route::middleware('guest')->group(function () {
-    // Template
-    // Route::view('/table-datatable', 'table-datatable');
-    // Route::view('/table-basic-table', 'table-basic-table');
-    // Route::view('/component-modals', 'component-modals');
-    // Route::view('/icons-boxicons', 'icons-boxicons');
-    // Route::view('/form-input-group', 'form-input-group');
-    // Route::view('/icons-boxicons', 'icons-boxicons');
-    // Route::view('/user-profile', 'user-profile');
-
     Route::view('/', 'auth.login');
 
     // Register
@@ -88,8 +79,7 @@ Route::middleware('auth',)->group(function () {
     Route::post('/pembelian-simpan', [PembelianController::class, 'simpan'])->middleware('role:Pembelian|Gudang');
     Route::post('/pembelian/hapus-bahanbaku', [PembelianController::class, 'hapusBahanbaku'])->middleware('role:Pembelian');
     Route::post('/pembelian/tambah-bahanbaku', [PembelianController::class, 'tambahBahanbaku'])->middleware('role:Pembelian');
-
-    // Permintaan-detail
+    // Pembelian-detail
     Route::get('/pembelian-detail', [PembelianController::class, 'detail'])->middleware('role:Gudang');
     Route::post('pembelian/terima-po', [PembelianController::class, 'terimastatus'])->middleware('role:Gudang');
 
